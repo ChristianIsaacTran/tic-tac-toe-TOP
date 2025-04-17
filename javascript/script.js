@@ -3,7 +3,7 @@
 We only need one gameboard, not multiple gameboards, so we 
 use a module.
 */
-const gameBoard = (function() {
+const gameBoard = (function () {
     const board = []; //Board will be private to prevent direct modification
     const boardRow = 3;
     const boardCol = 3;
@@ -12,9 +12,9 @@ const gameBoard = (function() {
 
     //Create a default board setup. A normal tic-tac-toe is a 3 by 3 board
     const initBoard = () => {
-        for(let i = 0; i < boardRow; i++){
+        for (let i = 0; i < boardRow; i++) {
             board[i] = []; //Add a row for each index
-            for(let j = 0; j < boardCol; j++){
+            for (let j = 0; j < boardCol; j++) {
                 board[i].push(""); //For each row, add an empty string to represent the columns
             }
         }
@@ -22,7 +22,7 @@ const gameBoard = (function() {
 
     //Used to display the current board in the console
     const displayCurrentBoard = () => {
-        for(let i = 0; i < board.length; i++){
+        for (let i = 0; i < board.length; i++) {
             console.log(board[i]); //Print each row to display the board
         }
     };
@@ -32,9 +32,9 @@ const gameBoard = (function() {
     const markSpace = (row, column, playerToken) => {
         board[row][column] = playerToken;
     };
-    
 
-    return {getBoard, initBoard, markSpace, displayCurrentBoard};
+
+    return { getBoard, initBoard, markSpace, displayCurrentBoard };
 })();
 
 
@@ -44,8 +44,10 @@ will also be an IIFE, because I only want one instance of it (I think...).
 */
 const gameRunner = (function (playerName1 = "player 1", playerName2 = "player 2") {
     //This is actually playing the game, so in this case I am creating 2 players from the given names
-    const player1 = { name: playerName1, token: "X"};
-    const player2 = { name: playerName2, token: "O"};
+    const player1 = { name: playerName1, token: "X" };
+    const player2 = { name: playerName2, token: "O" };
+
+    const board = gameBoard.getBoard();
 
     let currentPlayerTurn = player1; //By default make the start the game have player 1 go first
 
@@ -57,33 +59,93 @@ const gameRunner = (function (playerName1 = "player 1", playerName2 = "player 2"
         gameBoard.displayCurrentBoard();
     };
 
-    
+
 
     //Swap the currentplayerTurn to the other player 
     const swapPlayerTurn = () => {
-        if (currentPlayerTurn === player1){
+        if (currentPlayerTurn === player1) {
             currentPlayerTurn = player2;
         }
-        else{
+        else {
             currentPlayerTurn = player1;
         }
     }
 
     //When a player plays a turn, they mark the board with their token, then switch turns, then re-render the board display to display player selection
     const playTurn = (row, column) => {
+        if (!checkSpaceAvail(row, column)) { //If the space is unavailable, stop execution
+            return console.log("SPACE NOT AVAILABLE. PLEASE TRY AGAIN");
+        }
         gameBoard.markSpace(row, column, getCurrentPlayer().token);
+        if (checkWin(getCurrentPlayer().token)) { //Check if we have a winner and display message, also stop execution
+            console.log(`WE HAVE A WINNER: ${getCurrentPlayer().name}`)
+            gameBoard.displayCurrentBoard();
+            return;
+        }
         swapPlayerTurn();
         displayTurnMessage();
     };
 
-    
+    //Check for if the space is available for marking or not 
+    const checkSpaceAvail = (row, column) => {
+        if (board[row][column] === "") {
+            return true; //If the space is empty, return true
+        }
+        else {
+            return false; //If the space is occupied, return false
+        }
+    };
+
+    //Check for a win condition
+    const checkWin = (playerToken) => {
+
+        //Check each row for a win
+        for (let i = 0; i < board.length; i++) {
+            if (board[i].every((currentVal) => currentVal === playerToken)) {
+                return true;
+            }
+        }
+
+        //Check each column for a win 
+        const tempColArr = [];
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board.length; j++) {
+                tempColArr.push(board[j][i]);
+            }
+            if(tempColArr.every((currentVal) => currentVal === playerToken)){
+                return true;
+            }
+            tempColArr.splice(0, 3);
+        }
+
+        //Check each diagonal for a win
+        const tempTopDownArr = [];
+        const tempBottomUpArr = [];
+        let bottomUpCounter = 2;
+        for(let i = 0; i < board.length; i++){
+            tempTopDownArr.push(board[i][i]);
+            tempBottomUpArr.push(board[i][bottomUpCounter]);
+            bottomUpCounter -= 1;
+        }
+
+        if(tempTopDownArr.every((currentVal) => currentVal === playerToken)){
+            return true;
+        }
+
+        if(tempBottomUpArr.every((currentVal) => currentVal === playerToken)){
+            return true;
+        }
+    };
+
 
     gameBoard.initBoard(); //Initialize new game board at the start of the game
     displayTurnMessage(); //Initial turn 0 display when the game first starts
 
-    return {playTurn};
+    return { playTurn };
 
 })();
+
+
 
 
 /*IIFE displaycontroller to constrol the DOM elements/rendering
@@ -91,8 +153,6 @@ Same thing with the gameboard, we only really need one display
 controller to manipulate our DOM so we can make this a module as
 well.
 */
-const displayControl = (function (){
+const displayControl = (function () {
 
 })();
-
-
