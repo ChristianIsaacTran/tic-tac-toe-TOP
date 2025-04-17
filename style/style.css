@@ -1,0 +1,48 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    display: grid;
+    grid-template-rows: 100px 1fr;
+    justify-content: center;
+}
+
+.header {
+    text-align: center;
+    font-size: 3rem;
+}
+
+.main-board {
+    justify-self: center;
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+
+}
+
+.button-container {
+    padding: 10px;
+}
+
+.game-button {
+    padding: 40px;
+}
+
+.button-container[data-row="0"] {
+    border-bottom: 5px black solid;
+}
+
+.button-container[data-column="0"] {
+    border-right: 5px black solid;
+}
+
+.button-container[data-column="2"] {
+    border-left: 5px black solid;
+}
+
+.button-container[data-row="2"] {
+    border-top: 5px black solid;
+}

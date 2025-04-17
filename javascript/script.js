@@ -15,7 +15,7 @@ const gameBoard = (function () {
         for (let i = 0; i < boardRow; i++) {
             board[i] = []; //Add a row for each index
             for (let j = 0; j < boardCol; j++) {
-                board[i].push(""); //For each row, add an empty string to represent the columns
+                board[i].push("-"); //For each row, add an empty string to represent the columns
             }
         }
     };
@@ -82,10 +82,10 @@ const gameRunner = (function (playerName1 = "player 1", playerName2 = "player 2"
             gameBoard.displayCurrentBoard();
             return;
         }
-        if(checkTie(getCurrentPlayer.token)) { //Check if we have a tie, display message and stop execution.
+        if (checkTie(getCurrentPlayer.token)) { //Check if we have a tie, display message and stop execution.
             console.log("Too bad! It's a tie! No one wins.");
             gameBoard.displayCurrentBoard();
-            return; 
+            return;
         }
 
         swapPlayerTurn();
@@ -94,7 +94,7 @@ const gameRunner = (function (playerName1 = "player 1", playerName2 = "player 2"
 
     //Check for if the space is available for marking or not 
     const checkSpaceAvail = (row, column) => {
-        if (board[row][column] === "") {
+        if (board[row][column] === "-") {
             return true; //If the space is empty, return true
         }
         else {
@@ -146,8 +146,8 @@ const gameRunner = (function (playerName1 = "player 1", playerName2 = "player 2"
 
     //Check if all the spaces are filled, that means it is a tie because our win condition above would've dictated if there was a winner or not already.
     const checkTie = (playerToken) => {
-        for(let i = 0; i < board.length; i++){
-            if(board[i].includes("")){
+        for (let i = 0; i < board.length; i++) {
+            if (board[i].includes("-")) {
                 return false;
             }
         }
@@ -171,9 +171,54 @@ controller to manipulate our DOM so we can make this a module as
 well.
 */
 const displayControl = (function () {
+    const gameBoardDiv = document.createElement("div");
+    gameBoardDiv.setAttribute("class", "main-board");
+    const body = document.querySelector("body");
+    const board = gameBoard.getBoard();
 
+    //Reads the current display of the board and makes buttons on them, added it to the gameBoardDiv and added that to the body 
+    const renderGameBoard = () => {
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board.length; j++) {
+                const buttonContainer = document.createElement("div");
+                const createButton = document.createElement("button");
+                createButton.setAttribute("data-row", `${i}`); //Add data-attribute to pass to playTurn method in event handler
+                createButton.setAttribute("data-column", `${j}`); 
+                buttonContainer.setAttribute("data-row", `${i}`); //Add data-attribute to button-container for styling purposes
+                buttonContainer.setAttribute("data-column", `${j}`); 
+                createButton.setAttribute("class", "game-button");
+                createButton.textContent = board[i][j];
+                createButton.addEventListener("click", buttonEventHandler);
+                buttonContainer.setAttribute("class","button-container")
+                buttonContainer.appendChild(createButton);
+                gameBoardDiv.appendChild(buttonContainer);
+            }
+        }
 
+        body.appendChild(gameBoardDiv);
+    };
 
+    //Initial render when game starts
+    renderGameBoard();
 
+    //Add an event listener handler function that uses the game logic that we programmed earlier
+    /*
+    1.play turn when button is clicked
+    2.destroy the current board to display the new one
+    3.re-render the visual board with the new values and display
+    */
+    function buttonEventHandler() {
+        gameRunner.playTurn(this.getAttribute("data-row"), this.getAttribute("data-column"));
+        destroyCurrentDisplay();
+        renderGameBoard();
+    }
+
+    //Add a destroy function to destroy the previous display
+    const destroyCurrentDisplay = () => {
+        const buttonList = document.querySelectorAll(".button-container");
+        for(button of buttonList){
+            button.remove();
+        }
+    };
 
 })();
