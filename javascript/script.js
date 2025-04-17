@@ -82,6 +82,12 @@ const gameRunner = (function (playerName1 = "player 1", playerName2 = "player 2"
             gameBoard.displayCurrentBoard();
             return;
         }
+        if(checkTie(getCurrentPlayer.token)) { //Check if we have a tie, display message and stop execution.
+            console.log("Too bad! It's a tie! No one wins.");
+            gameBoard.displayCurrentBoard();
+            return; 
+        }
+
         swapPlayerTurn();
         displayTurnMessage();
     };
@@ -112,7 +118,7 @@ const gameRunner = (function (playerName1 = "player 1", playerName2 = "player 2"
             for (let j = 0; j < board.length; j++) {
                 tempColArr.push(board[j][i]);
             }
-            if(tempColArr.every((currentVal) => currentVal === playerToken)){
+            if (tempColArr.every((currentVal) => currentVal === playerToken)) {
                 return true;
             }
             tempColArr.splice(0, 3);
@@ -122,20 +128,31 @@ const gameRunner = (function (playerName1 = "player 1", playerName2 = "player 2"
         const tempTopDownArr = [];
         const tempBottomUpArr = [];
         let bottomUpCounter = 2;
-        for(let i = 0; i < board.length; i++){
+        for (let i = 0; i < board.length; i++) {
             tempTopDownArr.push(board[i][i]);
             tempBottomUpArr.push(board[i][bottomUpCounter]);
             bottomUpCounter -= 1;
         }
 
-        if(tempTopDownArr.every((currentVal) => currentVal === playerToken)){
+        if (tempTopDownArr.every((currentVal) => currentVal === playerToken)) {
             return true;
         }
 
-        if(tempBottomUpArr.every((currentVal) => currentVal === playerToken)){
+        if (tempBottomUpArr.every((currentVal) => currentVal === playerToken)) {
             return true;
         }
+
     };
+
+    //Check if all the spaces are filled, that means it is a tie because our win condition above would've dictated if there was a winner or not already.
+    const checkTie = (playerToken) => {
+        for(let i = 0; i < board.length; i++){
+            if(board[i].includes("")){
+                return false;
+            }
+        }
+        return true;
+    }
 
 
     gameBoard.initBoard(); //Initialize new game board at the start of the game
@@ -154,5 +171,9 @@ controller to manipulate our DOM so we can make this a module as
 well.
 */
 const displayControl = (function () {
+
+
+
+
 
 })();
