@@ -1,13 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="style/style.css">
 </head>
+
 <body>
     <div class="header">Tic-Tac-Toe</div>
+    <div class="messenger">
+        <h2 class="game-announcer">Welcome to the game! Click start to get started.</h2>
+        <button type="button" class="start-button">Start</button>
+    </div>
+    <dialog class="start-dialog">
+        <form action="" method="">
+            <h1>Please enter player names: </h1>
+            <label for="player1">Player 1:</label>
+            <input type="text" id="player1" name="playerName1" >
+            <label for="player2">Player 2:</label>
+            <input type="text" id="player2" name="playerName2" >
+            <button type="button" class="cancel-button">Cancel</button>
+            <button type="submit" class="submit-button">Submit</button>
+        </form>
+    </dialog>
+
     <script src="javascript/script.js"></script>
 </body>
+
 </html>
